@@ -1,0 +1,237 @@
+@charset "UTF-8";
+.window{
+	font-size: 100%;
+	width:98%;
+	height:100%;
+	position:absolute;
+	font-family:"微软雅黑";
+}
+.back{  
+	position:absolute;
+	z_index:1;
+}  
+.front{  
+	position:absolute;
+	z_index:2;
+}  
+.main{  
+	position:absolute;
+	z_index:3;
+}  
+.screen{
+	position:fixed;
+	z_index:50;
+	width:100%;
+	height:100%;
+}
+.battlefield:hover{
+	cursor: crosshair;
+}
+.nointeract{
+	-webkit-touch-callout: none; /* iOS Safari */
+	-webkit-user-select: none; /* Chrome/Safari/Opera */
+	-khtml-user-select: none; /* Konqueror */
+	-moz-user-select: none; /* Firefox */
+	-ms-user-select: none; /* Internet Explorer/Edge */
+	user-select: none
+}
+.field{   
+	background:#825313;
+}  
+.grid{
+	border-spacing:0px 0px;
+	border-collapse: collapse;
+}
+.grid tr td{
+	border:solid rgba(255,255,255,0.1);
+	border-width:1px 1px 1px 1px;
+}
+.blocks{  
+	width:64px;
+	height:64px;
+	background-size:cover;
+	background-repeat: no-repeat;
+	background-position: center;
+}  
+.select:hover{  
+	background: rgba(255,255,255,0.25);
+}  
+.targeted{  
+	background: rgba(255,55,55,0.5);
+}  
+.targeted:hover{  
+	background: rgba(255,110,110,0.5);
+}
+.lockedon{  
+	background: rgba(255,55,55,0.5);
+}  
+.lockedon:hover{  
+	background: rgba(255,110,110,0.5);
+}
+
+.button:hover{  
+	cursor:hand;
+}  
+.float{
+	position:fixed;
+	z_index=100;
+}
+.chatframe{
+	border-width:0px;
+}
+.chat{
+	overflow-y: scroll;
+	color: #66FF66;
+}
+.playerlist{
+	overflow-y: visible;
+	width:25%;
+	height:240px;
+	margin-left:75%;
+}
+.playerinfo{
+	color: #66FF66;
+}
+.playerinfo:link{
+	color: #66FF66;
+}
+.playerinfo:visited{
+	color: #66FF66;
+}
+.fade{
+	opacity:0.5;
+}
+.fade:hover{
+	opacity:1;
+}
+.left{
+	float: left;
+	direction: ltr;
+	text-align: left;
+}
+.right{
+	float: right;
+	direction: rtl;
+	text-align: left;
+}
+.list{
+	border-collapse: collapse;
+	border:solid black;
+	border-width: 1px 1px 1px 1px;
+}
+
+.list tr td{
+	border:solid black;
+	border-width: 1px 1px 1px 1px;
+}
+
+.item{
+	background:#CCCCCC;
+}
+
+.item:hover{
+	background:#EEEEEE;
+}
+
+.itempass{
+	color:#FFFFFF;
+	background:#666666;
+}
+
+.itempass:hover{
+	color:#FFFFFF;
+	background:#AAAAAA;
+}
+
+.createframe {
+	width:470px;
+	height:256px;
+	margin-left:45%;
+	margin-right:10%;
+	margin-top:5%
+}
+
+.createmenu {
+	color:#FFFFFF;
+	font-family: "微软雅黑";
+	padding: 4px 4px 4px 4px;
+}
+
+.mapmenu {
+	overflow-y:auto;
+	overflow-x:visible;
+	margin-left:10%;
+	width:320px;
+	height:224px;
+}
+
+.mapunit{
+	float:left;
+	width:62px;
+	height:62px;
+	overflow-x:visible;
+	overflow-y:visible;
+	border: solid #FFFFFF;
+	border-width: 1px;
+	background-size:cover;
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+.label{
+	background: rgba(0,0,0,0.5);
+	color: #FFFFFF;
+	font-size:12px;
+}
+
+.timer{
+	background: rgba(0,0,0,0.5);
+	color: #FFFFAA;
+	margin-left:45%;
+	font-size:36px;
+	text-align: center;
+	padding:5px 5px 5px 5px;
+}
+
+.hidden{
+	display:none;
+}
+
+.active {
+	display: block;
+}
+
+.subwindow{
+	background:rgba(0,0,0,0.5);
+}
+
+.buttontoggle{
+	background: url(../img/ui/toggle.gif);
+	width: 32px;
+	height: 32px;
+	border: none;
+}
+
+.charactermenu{
+	width:384px;
+	height:384px;
+	margin-left:30%;
+	margin-top:10%;
+}
+
+.charaunit{
+	float:left;
+	width:94px;
+	height:94px;
+	overflow-x:visible;
+	overflow-y:visible;
+	border: solid #FFFFFF;
+	border-width: 1px;
+	background-size:cover;
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+.coord{
+	
+}

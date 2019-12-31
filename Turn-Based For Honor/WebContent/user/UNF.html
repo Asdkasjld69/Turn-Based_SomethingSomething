@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>USER NOT FOUND</title>
+</head>
+
+<body onload="updateTime();">
+	<h1>用户不存在</h1>
+	<span id="countdown"></span>
+	<script type="text/javascript">
+		var time = 6
+	    var contain = document.getElementById("countdown")
+	    contain.innerHTML = "即将在"+time.toString() + "秒后自动关闭本页面..."
+	    function updateTime(){
+	        time = time-1
+	        contain.innerHTML = "即将在"+time.toString() + "秒后自动关闭本页面..."
+	    }
+	    setInterval("updateTime()",1000);
+	    setTimeout("javascript:window.close()", time*1000);
+	</script>
+</body>
+</html>
