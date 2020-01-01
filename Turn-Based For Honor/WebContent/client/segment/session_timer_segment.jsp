@@ -159,7 +159,8 @@ $('#join').click(function(){
 		var cid = $(this).attr("cid");
 		$(this).attr("id","charachosen");
 		$('.pchara').not(this).attr("id","");
-		if(isthis){
+		if(isthis=="true"){
+			alert(isthis);
 			switch(cid){
 			case 10:
 			case 11:

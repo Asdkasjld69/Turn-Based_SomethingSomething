@@ -167,8 +167,8 @@
 								<input type="hidden" name="stateno" value="0">
 								<input type="hidden" name="priority" value="5">
 							</form>
-							<div class="pchara blocks select${targeted}" posx="${col.index}" id="" posy="${row.index}" isthis="${thisuserpcl.contains(player_character)}" cid="${player_chara.getCharacter_id()}" >
-								<div class="blocks" style="background: url(img/avatar/character/warden.gif)"></div>
+							<div class="pchara blocks select${targeted}" posx="${col.index}" posy="${row.index}" id="" isthis="${player_chara.user_id==currentuser.id}" cid="${player_chara.character_id}" >
+								<div class="blocks" style="background: url(img/avatar/character/${player_chara.character_id}.gif)"></div>
 							</div>
 						</c:if>
 					</c:if>

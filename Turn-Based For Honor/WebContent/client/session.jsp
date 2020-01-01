@@ -213,8 +213,8 @@
 												<input type="hidden" name="stateno" value="0">
 												<input type="hidden" name="priority" value="5">
 											</form>
-											<div class="pchara blocks ${targeted}" posx="${col.index}" id="" posy="${row.index}" isthis="${thisuserpcl.contains(player_character)}" cid="${player_chara.getCharacter_id()}" >
-												<div class="blocks" style="background: url(img/avatar/character/warden.gif)"></div>
+											<div class="pchara blocks ${targeted}" posx="${col.index}" posy="${row.index}" id="" isthis="${player_chara.user_id==currentuser.id}" cid="${player_chara.character_id}" >
+												<div class="blocks" style="background: url(img/avatar/character/${player_chara.character_id}.gif)"></div>
 											</div>
 										</c:if>
 									</c:if>
@@ -322,7 +322,7 @@
 					</c:forEach>
 				</form>
 				<div class="charaunit select nointeract" id="chara${chara.id}" >
-					<div style="background:url(${pageContext.request.contextPath}/img/avatar/character/${chara.id}.gif);">
+					<div class="charaunit" style="background:url(${pageContext.request.contextPath}/img/avatar/character/${chara.id}.gif) no-repeat center;background-size:cover;">
 						<br/><br/><br/>
 						<span class="label nointeract">${chara.name}</span>
 					</div>
@@ -348,7 +348,7 @@
 					return refreshDiv("timer","get","#timer_head","/Turn-Based_For_Honor/LoadSessionServlet",false);
 				}
 				function updateplayerchara(){
-		            var tasks = [fcm,fpl,fbf,ftm];
+		            var tasks = [fcm,fbf,ftm,fpl];
 		            return tasks.reduce(function(prev,next){
 		              return prev.then(next);
 		            },$.Deferred().resolve());
@@ -513,7 +513,8 @@
 					var cid = $(this).attr("cid");
 					$(this).attr("id","charachosen");
 					$('.pchara').not(this).attr("id","");
-					if(isthis){
+					if(isthis=="true"){
+						alert(isthis);
 						switch(cid){
 						case 10:
 						case 11:

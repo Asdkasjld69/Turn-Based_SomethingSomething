@@ -136,6 +136,9 @@ public class Player {
 		posx = i;
 		posy = j;
 	}
-	
+	public int[] getPos() {
+		// TODO Auto-generated method stub
+		return new int[] {posx,posy};
+	}
 	
 }

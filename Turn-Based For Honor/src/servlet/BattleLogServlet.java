@@ -61,6 +61,7 @@ public class BattleLogServlet extends HttpServlet {
 				
 				}
 				ps.updatePlayer(p);
+				checkCollision(p,pl,m);
 			}
 			s.setState(s.getState()+1);
 			ss.updateSession(s);
@@ -109,7 +110,32 @@ public class BattleLogServlet extends HttpServlet {
 		
 	}
 	
-	private void squeeze(Player psrc,Player pdes) {
-		
+	private void checkCollision(Player p,List<Player> other,Map m) {
+		int[][] params = {{-1,0},{-1,-1},{0,-1},{1,-1},{1,0},{1,1},{0,1},{-1,1}};
+		int[][] map = m.getMap();
+		PlayerService ps = new PlayerService();
+		for(Player op:other) {
+			if(p.getId()==op.getId()) {
+				continue;
+			}
+			int[] pp = p.getPos();
+			int[] opp = op.getPos();
+			for(int[] param:params) {
+				if(pp[0]+param[0]>=0&&pp[0]+param[0]<m.getWidth()&&pp[1]+param[1]>=0&&pp[1]+param[1]<m.getHeight()) {
+					if(map[pp[1]+param[1]][pp[0]+param[0]]==0) {
+						if(p.getMove_time().after(op.getMove_time())) {
+							p.setPos(pp[0]+param[0], pp[1]+param[1]);
+							ps.updatePlayer(p);
+						}
+						else {
+							op.setPos(opp[0]+param[0], opp[1]+param[1]);
+							ps.updatePlayer(op);
+						}
+						break;
+					}
+				}
+				
+			}
+		}
 	}
 }

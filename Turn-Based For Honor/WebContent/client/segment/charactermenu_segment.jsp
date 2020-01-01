@@ -25,7 +25,7 @@
 		</c:forEach>
 	</form>
 	<div class="charaunit select nointeract" id="chara${chara.id}" >
-		<div style="background:url(${pageContext.request.contextPath}/img/avatar/character/${chara.id}.gif);">
+		<div class="charaunit" style="background:url(${pageContext.request.contextPath}/img/avatar/character/${chara.id}.gif) no-repeat center;background-size:cover;">
 			<br/><br/><br/>
 			<span class="label">${chara.name}</span>
 		</div>
@@ -51,7 +51,7 @@ $('.charaunit').click(function(){
 		return refreshDiv("timer","get","#timer_head","/Turn-Based_For_Honor/LoadSessionServlet",false);
 	}
 	function updateplayerchara(){
-           var tasks = [fcm,fpl,fbf,ftm];
+           var tasks = [fcm,fbf,ftm,fpl];
            return tasks.reduce(function(prev,next){
              return prev.then(next);
            },$.Deferred().resolve());
