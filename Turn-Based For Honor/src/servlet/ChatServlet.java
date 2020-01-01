@@ -13,8 +13,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import bean.Chat;
 import bean.Chat_Public;
+import bean.Session;
 import bean.User;
 import service.ChatService;
+import service.SessionService;
 
 /**
  * Servlet implementation class ChatServlet
@@ -31,12 +33,12 @@ public class ChatServlet extends HttpServlet {
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		ChatService cservice = new ChatService();
+		SessionService ss = new SessionService();
 		String type = request.getParameter("type");
 		String ssid = request.getParameter("id");
+		String init = request.getParameter("init");
+		Session s = null;
 		int sid = -1;
-		if (ssid != null) {
-			sid = Integer.parseInt(ssid);
-		}
 		switch (type) {
 		case "public":
 			List<Chat_Public> l = cservice.listPublicChat();
@@ -44,10 +46,26 @@ public class ChatServlet extends HttpServlet {
 			request.getRequestDispatcher("/client/segment/chat_public_segment.jsp").forward(request, response);
 			break;
 		case "session":
+			sid = Integer.parseInt(ssid);
 			List<Chat> sl = cservice.findChatBySessionId(sid);
 			request.setAttribute("chats", sl);
-			request.setAttribute("session_id", sid);
-			request.getRequestDispatcher("/client/segment/chat_session_segment.jsp").forward(request, response);
+			if(init!=null&&!init.trim().equals("")) {
+				s = ss.findSessionById(sid);
+				System.out.println(s);
+				User tu = (User)request.getSession().getAttribute("currentuser");
+				if(tu!=null){
+					request.setAttribute("thisuser", s.getUser(tu.getId()));
+				}
+				else{
+					response.sendRedirect(this.getServletContext().getContextPath()+"/");
+				}
+				request.setAttribute("session", s);
+				request.getRequestDispatcher("/client/segment/chatframe_session_segment.jsp").forward(request, response);
+			}
+			else {
+				request.getRequestDispatcher("/client/segment/chat_session_segment.jsp").forward(request, response);
+			}
+			
 		}
 
 	}
@@ -78,10 +96,6 @@ public class ChatServlet extends HttpServlet {
 				ChatService cservice = new ChatService();
 				String ssid = request.getParameter("id");
 				int sid = -1;
-				if (ssid != null) {
-					sid = Integer.parseInt(ssid);
-				}
-
 				String type = request.getParameter("type");
 				String message = request.getParameter("message");
 				switch (type) {
@@ -93,6 +107,7 @@ public class ChatServlet extends HttpServlet {
 					cservice.addPublicChat(c);
 					break;
 				case "session":
+					sid = Integer.parseInt(ssid);
 					Chat sc = new Chat();
 					sc.setContent(message);
 					sc.setPlayer_id(user.getId());

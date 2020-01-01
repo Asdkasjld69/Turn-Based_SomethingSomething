@@ -10,11 +10,9 @@
 <link href="${pageContext.request.contextPath}/css/style.css" type="text/css" rel="stylesheet"/>
 <title>BATTLELOG</title>
 </head>
-	<span>-第${battlelogs.get(0).turn}回合开始-</span>
 	<c:forEach items="${battlelogs}" var="battlelog" varStatus="row">
 		<li style="list-style-type:none"> 
-			${battlelog.player_name}(${battlelog.character_name})(${battlelog.movex},${battlelog.movey})
+			第${battlelog.turn}回合:${battlelog.player_name}(${battlelog.character_name})(${battlelog.movex},${battlelog.movey})
 		</li>
 	</c:forEach>
-	<span>-第${battlelogs.get(0).turn}回合结束-</span>
 </html>

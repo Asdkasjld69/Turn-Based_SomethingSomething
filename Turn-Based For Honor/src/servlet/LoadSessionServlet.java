@@ -65,21 +65,21 @@ public class LoadSessionServlet extends HttpServlet {
 		s = sservice.findSessionById(id);
 		System.out.println(id+" "+s);
 		request.setAttribute("session", s);
+		User tu = null;
 		switch(type) {
 		case "timer":
 		case "character_select":
 		case "battlefield":
-			Session cs = (bean.Session)request.getAttribute("session");
-			User tu = (bean.User)request.getSession().getAttribute("currentuser");
+			tu = (bean.User)request.getSession().getAttribute("currentuser");
 			request.setAttribute("thisuser", null);
 			request.setAttribute("thisuserpl", null);
 			request.setAttribute("thisuserpcl", null);
 			request.setAttribute("thisuserpcount", 0);
 			request.setAttribute("thisuserpccount", 0);
 			if(tu!=null){
-				User insess = cs.getUser(tu.getId());
-				List<bean.Player> pll = cs.getUserPlayer(tu.getId());
-				List<bean.Player> plcl = cs.getPlayer(tu.getId());
+				User insess = s.getUser(tu.getId());
+				List<bean.Player> pll = s.getUserPlayer(tu.getId());
+				List<bean.Player> plcl = s.getPlayer(tu.getId());
 				request.setAttribute("thisuser", insess);
 				request.setAttribute("thisuserpl", pll);
 				request.setAttribute("thisuserpcl", plcl);
@@ -115,27 +115,15 @@ public class LoadSessionServlet extends HttpServlet {
 			map = mservice.findMapById(s.getMap_id());
 			pcl = pservice.findPlayerBySession(id);
 			b = bservice.findUserBattleLogByTurn(s.getId(),pid,s.getState());
-			request.setAttribute("battlelogs", b);
+			request.setAttribute("thisbattlelogs", b);
 			request.setAttribute("map", map);
 			request.setAttribute("characters", pcl);
 			request.getRequestDispatcher("/client/segment/session_battlefield_segment.jsp").forward(request, response);
 			break;
 		default:
 			mservice = new MapService();
-			pservice = new PlayerService();
-			cservice = new ChatService();
-			bservice = new BattleLogService();
-			pid = Integer.parseInt(request.getParameter("user_id"));
 			map = mservice.findMapById(s.getMap_id());
-			pl = pservice.findUserBySession(id);
-			pcl = pservice.findPlayerBySession(id);
-			cl = cservice.findChatBySessionId(id);
-			b = bservice.findUserBattleLogByTurn(s.getId(),pid,s.getState());
 			request.setAttribute("map", map);
-			request.setAttribute("players", pl);
-			request.setAttribute("characters", pcl);
-			request.setAttribute("chats", cl);
-			request.setAttribute("battlelogs", b);
 			request.getRequestDispatcher("/client/session.jsp").forward(request, response);
 		}
 	}

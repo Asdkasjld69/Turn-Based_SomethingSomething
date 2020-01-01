@@ -32,6 +32,7 @@ public class BattleLogServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		int sid = Integer.parseInt(request.getParameter("session_id"));
+		int pid = Integer.parseInt(request.getParameter("user_id"));
 		BattleLogService bs = new BattleLogService();
 		SessionService ss = new SessionService();
 		MapService ms = new MapService();

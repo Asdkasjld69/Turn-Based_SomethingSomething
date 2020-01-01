@@ -142,13 +142,14 @@
 								<c:set var="player_chara" value="${chara}"/>
 							</c:if>
 						</c:forEach>
-						<c:forEach items="${battlelogs}" var="battlelog">
+						<c:forEach items="${thisbattlelogs}" var="battlelog">
 							<c:if test="${row.index==battlelog.movey&&col.index==battlelog.movex}">
 								<c:set var="targeted" value=" lockedon"/>
 							</c:if>
 						</c:forEach>
 						<c:if test="${isplayer<=0||player_chara.state<=-1}">
 							<form action="#" id="init${col.index}_${row.index}">
+								<input type="hidden" name="user_id" value="${currentuser.id}">
 								<input type="hidden" name="player_id" value="${thisuserpcl!=null&&thisuserpcl.size()>0?thisuserpcl.get(0).getId():null}">
 								<input type="hidden" name="session_id" value="${session.id}">
 								<input type="hidden" name="movex" value="${col.index}">
@@ -160,6 +161,7 @@
 						</c:if>
 						<c:if test="${isplayer>0&&player_chara.state>-1}">
 							<form action="#" id="action${player_chara.id}">
+								<input type="hidden" name="user_id" value="${currentuser.id}">
 								<input type="hidden" name="player_id" value="${player_chara.id}">
 								<input type="hidden" name="session_id" value="${session.id}">
 								<input type="hidden" name="movex" value="${col.index}">
