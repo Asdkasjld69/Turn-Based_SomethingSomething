@@ -328,6 +328,37 @@
 					</div>
 				</div>
 			</c:forEach>
+			<script type="text/javascript">
+			$('.charaunit').click(function(){
+				var id = $(this).attr("id");
+				function fcm(){
+					console.log("Updating CharacterMenu");
+					return refreshDiv("charactermenu","post","#"+id+"info","/Turn-Based_For_Honor/LoadSessionServlet",false);
+				}
+				function fpl(){
+					console.log("Updating PlayerList");
+					return refreshDiv("playerlist","get","#playerlist_head","/Turn-Based_For_Honor/LoadSessionServlet",false);
+				}
+				function fbf(){
+					console.log("Updating BattleField");
+					return refreshDiv("battlefield","get","#battlefield_head","/Turn-Based_For_Honor/LoadSessionServlet",false);
+				}
+				function ftm(){
+					console.log("Updating Timer");
+					return refreshDiv("timer","get","#timer_head","/Turn-Based_For_Honor/LoadSessionServlet",false);
+				}
+				function updateplayerchara(){
+		            var tasks = [fcm,fpl,fbf,ftm];
+		            return tasks.reduce(function(prev,next){
+		              return prev.then(next);
+		            },$.Deferred().resolve());
+		        }
+				$.when(updateplayerchara()).done(function(){
+		            console.log("Updated");
+				})
+				$('#charactermenu').hide();
+			});
+			</script>
 		</div>
 		<div id="timer" class="timer float nointeract">
 			<form action="#" method="get" id="timer_head" class="hidden">
@@ -466,7 +497,7 @@
 								return refreshDiv("timer","get","#timer_head","/Turn-Based_For_Honor/LoadSessionServlet",false);
 							}
 							function updatebattlelog(){
-					            var tasks = [fbl,fbf,fpl,ftm];
+					            var tasks = [fbl,ftm,fbf,fpl];
 					            return tasks.reduce(function(prev,next){
 					              return prev.then(next);
 					            },$.Deferred().resolve());
@@ -489,35 +520,6 @@
 						case 12:
 						}
 					}
-				});
-				$('.charaunit').click(function(){
-					var id = $(this).attr("id");
-					function fcm(){
-						console.log("Updating CharacterMenu");
-						return refreshDiv("charactermenu","post","#"+id+"info","/Turn-Based_For_Honor/LoadSessionServlet",false);
-					}
-					function fpl(){
-						console.log("Updating PlayerList");
-						return refreshDiv("playerlist","get","#playerlist_head","/Turn-Based_For_Honor/LoadSessionServlet",false);
-					}
-					function fbf(){
-						console.log("Updating BattleField");
-						return refreshDiv("battlefield","get","#battlefield_head","/Turn-Based_For_Honor/LoadSessionServlet",false);
-					}
-					function ftm(){
-						console.log("Updating Timer");
-						return refreshDiv("timer","get","#timer_head","/Turn-Based_For_Honor/LoadSessionServlet",false);
-					}
-					function updateplayerchara(){
-			            var tasks = [fcm,fpl,fbf,ftm];
-			            return tasks.reduce(function(prev,next){
-			              return prev.then(next);
-			            },$.Deferred().resolve());
-			        }
-					$.when(updateplayerchara()).done(function(){
-			            console.log("Updated");
-					})
-					$('#charactermenu').hide();
 				});
 			</script>
 		</div>

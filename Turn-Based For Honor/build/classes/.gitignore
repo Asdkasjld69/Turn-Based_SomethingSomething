@@ -1,0 +1,10 @@
+/bean/
+/c3p0-config.xml
+/client/
+/database/
+/for_mysql.sql
+/mail.properties
+/merchantInfo.properties
+/security/
+/service/
+/servlet/
