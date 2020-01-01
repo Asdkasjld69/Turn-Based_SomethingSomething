@@ -43,7 +43,7 @@ public class PlayerDAO {
 	}
 	
 	public Player findPlayerById(int user_id) throws SQLException {
-		String sql = "select CHARACTERS.avatar character_avatar,CHARACTERS.speed speed,username,PLAYERS.* from PLAYERS,USERS,CHARACTERS where character_id=CHARACTERS.id and user_id=USERS.id and PLAYERS.state>-2 and PLAYERS.id=? ";
+		String sql = "select CHARACTERS.avatar character_avatar,CHARACTERS.speed speed,username,USERS.avatar user_avatar,PLAYERS.* from PLAYERS,USERS,CHARACTERS where character_id=CHARACTERS.id and user_id=USERS.id and PLAYERS.state>-2 and PLAYERS.id=? ";
 		QueryRunner runner = new QueryRunner(DataSourceUtils.getDataSource());
 		Player Player = runner.query(sql, new BeanHandler<Player>(Player.class), user_id);
 		return Player;
@@ -57,7 +57,7 @@ public class PlayerDAO {
 	}
 
 	public List<Player> findPlayerBySession(int session_id) throws SQLException {
-		String sql = "select CHARACTERS.avatar character_avatar,CHARACTERS.speed speed,PLAYERS.* from PLAYERS,CHARACTERS where character_id=CHARACTERS.id and PLAYERS.state>-2 and session_id=?";
+		String sql = "select CHARACTERS.avatar character_avatar,CHARACTERS.speed speed,username,USERS.avatar user_avatar,PLAYERS.* from PLAYERS,CHARACTERS,USERS where user_id=USERS.id and character_id=CHARACTERS.id and PLAYERS.state>-2 and session_id=?";
 		QueryRunner runner = new QueryRunner(DataSourceUtils.getDataSource());
 		List<Player> Player = runner.query(sql, new BeanListHandler<Player>(Player.class), session_id);
 		return Player;

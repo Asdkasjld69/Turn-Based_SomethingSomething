@@ -26,6 +26,11 @@ function scrollToBottom(tag){
 	t.scrollTop=t.scrollTop+t.scrollHeight;
 }
 
+function resizeToParent(tag){
+	var obj = parent.document.getElementById(tag);
+    obj.height = this.document.body.scrollHeight;
+}
+
 function evalScript(html){
 	var reg = /<script[^>]*>([^\x00]+)$/i;
 	var htmlBlock = html.split("<\/script>");

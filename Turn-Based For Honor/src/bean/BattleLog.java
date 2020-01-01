@@ -10,15 +10,15 @@ public class BattleLog {
 	 private int movex;
 	 private int movey;
 	 private int priority;
-	 private String player_name;
+	 private String user_name;
 	 private String character_name;
 	 
 	 
-	public String getPlayer_name() {
-		return player_name;
+	public String getUser_name() {
+		return user_name;
 	}
-	public void setPlayer_name(String player_name) {
-		this.player_name = player_name;
+	public void setUser_name(String user_name) {
+		this.user_name = user_name;
 	}
 	public String getCharacter_name() {
 		return character_name;

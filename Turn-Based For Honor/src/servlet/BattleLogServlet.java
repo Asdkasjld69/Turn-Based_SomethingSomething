@@ -39,6 +39,14 @@ public class BattleLogServlet extends HttpServlet {
 		PlayerService ps = new PlayerService();
 		Session s = ss.findSessionById(sid);
 		Map m = ms.findMapById(s.getMap_id());
+		System.out.println("W:"+m.getWidth()+" "+"H:"+m.getHeight());
+		int[][] maaap = m.getMap();
+		for(int[] maap:maaap) {
+			for(int mp:maap) {
+				System.out.print(mp);
+			}
+			System.out.println();
+		}
 		List<BattleLog> bl = bs.findBattleLogByTurn(sid, s.getState());
 		List<Player> pl = ps.findPlayerBySession(sid);
 		if(bl.size()>=s.getPcount()&&s.getUcount()>1&&s.getPcount()>1) {
@@ -62,7 +70,11 @@ public class BattleLogServlet extends HttpServlet {
 				
 				}
 				ps.updatePlayer(p);
-				checkCollision(p,pl,m);
+			}
+			List<Player> npl = ps.findPlayerBySession(sid);
+			for(Player p:npl) {
+				System.out.println("checking collisions for "+p.getUsername()+"("+p.getCharacter_id()+")");
+				checkCollision(p,npl,m);
 			}
 			s.setState(s.getState()+1);
 			ss.updateSession(s);
@@ -116,26 +128,38 @@ public class BattleLogServlet extends HttpServlet {
 		int[][] map = m.getMap();
 		PlayerService ps = new PlayerService();
 		for(Player op:other) {
+			System.out.println(op.getUsername());
 			if(p.getId()==op.getId()) {
+				System.out.println(op.getUsername()+" IS SELF");
 				continue;
 			}
 			int[] pp = p.getPos();
 			int[] opp = op.getPos();
-			for(int[] param:params) {
-				if(pp[0]+param[0]>=0&&pp[0]+param[0]<m.getWidth()&&pp[1]+param[1]>=0&&pp[1]+param[1]<m.getHeight()) {
-					if(map[pp[1]+param[1]][pp[0]+param[0]]==0) {
-						if(p.getMove_time().after(op.getMove_time())) {
-							p.setPos(pp[0]+param[0], pp[1]+param[1]);
-							ps.updatePlayer(p);
+			if(pp[0]==opp[0]&&pp[1]==opp[1]) {
+				System.out.println("COLLISION DETECTED");
+				for(int[] param:params) {
+					System.out.println("trying"+" "+param[0]+","+param[1]);
+					if(pp[0]+param[0]>=0&&pp[0]+param[0]<m.getWidth()&&pp[1]+param[1]>=0&&pp[1]+param[1]<m.getHeight()) {
+						if(map[pp[1]+param[1]][pp[0]+param[0]]==0) {
+							if(p.getMove_time().after(op.getMove_time())) {
+								p.setPos(pp[0]+param[0], pp[1]+param[1]);
+								ps.updatePlayer(p);
+							}
+							else {
+								op.setPos(opp[0]+param[0], opp[1]+param[1]);
+								ps.updatePlayer(op);
+							}
+							System.out.println("COLLISION SOLVED");
+							break;
 						}
 						else {
-							op.setPos(opp[0]+param[0], opp[1]+param[1]);
-							ps.updatePlayer(op);
+							System.out.println("NO GOOD");
 						}
-						break;
+					}
+					else {
+						System.out.println("METHOD "+param[0]+","+param[1]+" OUT OF BOUNDES("+(pp[0]+param[0])+","+(pp[1]+param[1])+")");
 					}
 				}
-				
 			}
 		}
 	}

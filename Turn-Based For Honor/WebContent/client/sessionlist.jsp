@@ -11,7 +11,7 @@
 <title>LOBBY</title>
 </head>
 
-<body onload="refreshDiv('sesslist','get','#search','/Turn-Based_For_Honor/ListSessionServlet',${false});">
+<body>
 	<div class="window">
 		<form action="#" id="search" method="GET" class="left nointeract">
 			<input type="hidden" name="type" value="${currentuser.role}">
@@ -109,8 +109,10 @@
 		<button class="cancel" target="#prompt">取消</button>
 	</div>
 	<script type="text/javascript">
-		$('.createframe').hide();
-		$('#return', window.parent.document).hide(100);
+	$('#return', window.parent.document).hide(100);
+	$(function(){
+		refreshDiv("sesslist","get","#search","/Turn-Based_For_Honor/ListSessionServlet",${false});
+		$('#main', window.parent.document).attr("scrolling","no");
 		$('#createsession').click(function (){
 			$('.createframe').toggle(100);
 		});
@@ -132,36 +134,35 @@
 				$('#capnum').html(num);
 			}
 		})
-		
-		function attemptJoin(target,password){
-			$('.createframe').hide();
-			if(password==""){
-				location.href=target;
-			}
-			else{
-				$('#prompt').show();
-				$('#prompt').keydown(function(event){
-					if(event.keyCode==13){
-						if($('#spass').val()==password){
-							location.href=target;
-						}
-						else{
-							$('#promptmessage').css({"color":"#FFAAAA"});
-							alert("密码错误!");
-						}
-					}
-				});
-			}
-		}
 		$('.cancel').click(function(){
 			var target = $(this).attr("target");
 			$('#promptmessage').css({"color":"#FFFFFF"});
 			$(target).hide();
 		});
-	    function refresh(){
-	    	refreshDiv("sesslist","get","#search","/Turn-Based_For_Honor/ListSessionServlet",false);
-	    }
-	    
+	});	
+	function refresh(){
+    	refreshDiv("sesslist","get","#search","/Turn-Based_For_Honor/ListSessionServlet",false);
+    }
+    function attemptJoin(target,password){
+		$('.createframe').hide();
+		if(password==""){
+			location.href=target;
+		}
+		else{
+			$('#prompt').show();
+			$('#prompt').keydown(function(event){
+				if(event.keyCode==13){
+					if($('#spass').val()==password){
+						location.href=target;
+					}
+					else{
+						$('#promptmessage').css({"color":"#FFAAAA"});
+						alert("密码错误!");
+					}
+				}
+			});
+		}
+	}
 	</script>
 </body>
 </html>

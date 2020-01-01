@@ -39,11 +39,7 @@ public class LoadSessionServlet extends HttpServlet {
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		String type = request.getParameter("type");
-		String sid = request.getParameter("id");
-		if(sid==null||sid=="") {
-			System.out.println("!"+type+" "+sid);
-		}
-		int id = Integer.parseInt(sid);
+		int id = Integer.parseInt(request.getParameter("id"));
 		int pid = -1;
 		SessionService sservice = null;
 		MapService mservice = null;
@@ -143,7 +139,7 @@ public class LoadSessionServlet extends HttpServlet {
 				// TODO Auto-generated method stub
 				String type = request.getParameter("type");
 				String sid = request.getParameter("id");
-				int id = Integer.parseInt(sid);
+				int id = -1;
 				SessionService sservice = null;
 				MapService mservice = null;
 				PlayerService pservice = null;
@@ -161,6 +157,7 @@ public class LoadSessionServlet extends HttpServlet {
 				System.out.println(type);
 				switch (type) {
 				case "playerlist":
+					id = Integer.parseInt(sid);
 					int uid = Integer.parseInt(request.getParameter("user_id"));
 					pservice = new PlayerService();
 					p = new Player();
@@ -201,7 +198,7 @@ public class LoadSessionServlet extends HttpServlet {
 				async.complete();
 			}
 		});
-
+		
 	}
 
 }

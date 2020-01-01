@@ -9,12 +9,20 @@
 <script src="${pageContext.request.contextPath}/js/scripts.js"></script>
 <link href="${pageContext.request.contextPath}/css/style.css" type="text/css" rel="stylesheet"/>
 <title>CHAT_SESSION_SEGMENT</title>
+<style type="text/css">
+li{
+overflow: hidden;
+text-overflow: ellipsis;
+word-wrap: break-word;
+word-break: normal;
+}
+</style>
 </head>
 	<form action="#" method="get" id="chat_head" class="hidden">
 		<input type="hidden" name="type" value="session">
 	</form>
 	<c:forEach items="${chats}" var="chat">
-		<li style="list-style-type:none">
+		<li id="${chat.id}" style="list-style-type:none">
 			${chat.username} : ${chat.content}
 		</li>
 	</c:forEach>

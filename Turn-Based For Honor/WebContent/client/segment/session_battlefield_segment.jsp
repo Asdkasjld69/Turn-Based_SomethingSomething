@@ -109,7 +109,7 @@
 									<c:set var="object" value="trap/trap"/>
 									<c:set var="type" value="689"/>
 								</c:if>
-								<c:if test="${map.map[row.index][col.index+1]==3&&map.map[row.index-1][col.index]==3 }">
+								<c:if test="${map.map[row.index][col.index+1]==4&&map.map[row.index-1][col.index]==4 }">
 									<c:set var="object" value="pit/pit"/>
 									<c:set var="type" value="689"/>
 								</c:if>
@@ -179,6 +179,65 @@
 		</tr>
 	</c:forEach>
 </table>
-
+<script type="text/javascript">
+$(function(){
+	$('.coord').click(function(){
+		var sessionstate = ${session.state};
+		var haschara = ${thisuserpcl!=null&&thisuserpcl.size()>0};
+		var charastate = ${(thisuserpcl!=null&&thisuserpcl.size()>0)?thisuserpcl.get(0).state:-1};
+		if((sessionstate==0)&&(haschara==true)&&(charastate<sessionstate)){
+			$(this).attr("id","coordchosen");
+			$(this).removeClass("select").addClass("targeted");
+			$('.coord').not(this).attr("id","");
+			$('.coord').not(this).removeClass("targeted").addClass("select");
+			$('#confirminit').click(function(){
+				var posx = $('#coordchosen').attr("posx");
+				var posy = $('#coordchosen').attr("posy");
+				var form = "#init"+posx+"_"+posy;
+				alert($(form).serialize());
+				function fbl(){
+					console.log("Updating BattleLog");
+					return refreshDiv("battlelog","post",form,"/Turn-Based_For_Honor/BattleLogServlet",true);
+				}
+				function fbf(){
+					console.log("Updating BattleField");
+					return refreshDiv("battlefield","get","#battlefield_head","/Turn-Based_For_Honor/LoadSessionServlet",false);
+				}
+				function fpl(){
+					console.log("Updating PlayerList");
+					return refreshDiv("playerlist","get","#playerlist_head","/Turn-Based_For_Honor/LoadSessionServlet",false);
+				}
+				function ftm(){
+					console.log("Updating Timer");
+					return refreshDiv("timer","get","#timer_head","/Turn-Based_For_Honor/LoadSessionServlet",false);
+				}
+				function updatebattlelog(){
+		            var tasks = [fbl,ftm,fbf,fpl];
+		            return tasks.reduce(function(prev,next){
+		              return prev.then(next);
+		            },$.Deferred().resolve());
+		        }
+				$.when(updatebattlelog()).done(function(){
+		            console.log("Updated");
+	        	});
+			});
+		}
+	});
+	$('.pchara').click(function(){
+		var isthis = $(this).attr("isthis");
+		var cid = $(this).attr("cid");
+		$(this).attr("id","charachosen");
+		$('.pchara').not(this).attr("id","");
+		if(isthis=="true"){
+			alert("IT'S YOU!");
+			switch(cid){
+			case 10:
+			case 11:
+			case 12:
+			}
+		}
+	});
+});
+</script>
 
 </html>

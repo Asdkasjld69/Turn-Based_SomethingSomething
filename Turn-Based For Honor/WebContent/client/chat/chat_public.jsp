@@ -8,13 +8,14 @@
 <title>CHAT_PUBLIC</title>
 <link href="${pageContext.request.contextPath}/css/style.css" type="text/css" rel="stylesheet"/>
 <script src="${pageContext.request.contextPath}/js/jquery-3.4.1.js"></script>
+<style type="text/css">
+</style>
 </head>
-
-<body onload="refreshDiv('chat','get','#head','/Turn-Based_For_Honor/ChatServlet',${true});" >
+<body>
 	<form action="#" method="get" id="head">
 		<input type="hidden" name="type" value="public">
 	</form>
-	<div id="chat" style="height:475px;overflow-y:scroll">
+	<div id="chat" style="width:100%;height:475px;overflow-y:scroll">
 		<c:forEach items="${chats}" var="chat">
 			<c:url var="info" value="/UserProfileServlet">
 				<c:param name="id" value="${chat.user_id}"></c:param>
@@ -28,6 +29,14 @@
 	</form>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/scripts.js"></script>
 	<script type="text/javascript">
+	refreshDiv("chat","get","#head","/Turn-Based_For_Honor/ChatServlet",${true});
+	$(function(){
+		$('#chat').height($(window).height()-60);
+		$('#message').width($('body').width());
+		$(window).resize(function(){
+			$('#chat').height($(window).height()-60);
+			$('#message').width($('body').width());
+		})
 		$("#inputmessage").keydown (function(event){
 			if(event.keyCode==13){
 				if($('#message').val().trim()!=""){
@@ -39,6 +48,7 @@
 				}
 			}
 		});
+	})
 	</script>
 </body>
 </html>
