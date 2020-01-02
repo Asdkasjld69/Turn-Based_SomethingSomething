@@ -41,7 +41,7 @@ public class SessionService {
 		return r;
 	}
 	
-	public List<Session> findSessionByConditions(String id,String map_id,String name,String map_name,String cap,String state,String password){
+	public List<Session> findSessionByConditions(String id,String map_id,String name,String map_name,String cap,String state,String password,String username,String currentusername,String type){
 		List<String[]> conditions = new ArrayList<String[]>();
 		List<Session> l = null;
 		if(id!=null&&!id.trim().equals("")) {
@@ -64,6 +64,14 @@ public class SessionService {
 		}
 		if(password!=null&&!password.trim().equals("")) {
 			conditions.add(new String[] {"password",password});
+		}
+		if(username != null&&!username.trim().equals("")) {
+			switch(type) {
+			case"SUPER":
+				conditions.add(new String[] {"username",username});break;
+			case"NORMAL":
+				conditions.add(new String[] {"username",currentusername,username});break;
+			}
 		}
 		try {
 			l = dao.findSessionByConditions(conditions);

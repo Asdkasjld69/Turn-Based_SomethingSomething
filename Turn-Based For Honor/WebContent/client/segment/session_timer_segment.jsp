@@ -66,12 +66,12 @@
 				</span>
 			</c:if>
 		</c:if>
-		<c:if test="${session.state==-1}">
+		<c:if test="${session.state==-2}">
 			<span class="header">
 				已结束
 			</span>
 		</c:if>
-		<c:if test="${session.state==-2}">
+		<c:if test="${session.state==-3}">
 			<span class="header">
 				已被终止
 			</span>
@@ -87,15 +87,22 @@
 <script type="text/javascript">
 $(function(){
 	$('#timer').css({"margin-left":$('#main',window.parent.document).width()/2-$('.header').width()/2+"px"});
+	$(window).resize(function(){
+		$('#timer').css({"margin-left":$('#main',window.parent.document).width()/2-$('.header').width()/2+"px"});
+	});
 	$('#join').click(function(){
 		function fpl(){
 			return refreshDiv("playerlist","post","#playerlist_head","/Turn-Based_For_Honor/LoadSessionServlet",false);
+		}
+		function fcf(){
+			console.log("Updating Chatframe");
+			return refreshDiv("chatframe","get","#chat_init_head","/Turn-Based_For_Honor/ChatServlet",true);
 		}
 		function ftm(){
 			return refreshDiv("timer","get","#timer_head","/Turn-Based_For_Honor/LoadSessionServlet",false);
 		}
 		function updatetimer(){
-	        var tasks = [fpl,ftm];
+	        var tasks = [fpl,fcf,ftm];
 	        return tasks.reduce(function(prev,next){
 	          return prev.then(next);
 	        },$.Deferred().resolve());
@@ -131,6 +138,41 @@ $(function(){
 	});
 	$('#situation').mouseleave(function(){
 		$('#timer').css({"margin-left":$('#main',window.parent.document).width()/2-$(this).width()/2+"px"});
+	});
+	$('#confirm').click(function(){
+		var sessionstate = ${session.state};
+		if(sessionstate>0){
+			<c:forEach items="${thisuserpcl}" var="pc">  
+           　　			var pcid = ${pc.id}; 
+           　　			function fbl(){
+           　　				console.log("Updating BattleLog");
+           　　				return refreshDiv("battlelog","post","#action"+pcid,"/Turn-Based_For_Honor/BattleLogServlet",true);	
+           　　			}
+           　　			function ftm(){
+           　				console.log("Updating Timer");
+           　				return refreshDiv("timer","get","#timer_head","/Turn-Based_For_Honor/LoadSessionServlet",false);
+           　			}
+           　       			function fpl(){
+           　				console.log("Updating PlayerList");
+           　				return refreshDiv("playerlist","get","#playerlist_head","/Turn-Based_For_Honor/LoadSessionServlet",false);
+           　			}
+
+           　			function fbf(){
+           　				console.log("Updating BattleField");
+           　				return refreshDiv("battlefield","get","#battlefield_head","/Turn-Based_For_Honor/LoadSessionServlet",false);
+           　			}
+           　			function updateeverything(){
+           　	            var tasks = [fbl,ftm,fpl,fbf];
+           　	            return tasks.reduce(function(prev,next){
+           　	              return prev.then(next);
+           　	            },$.Deferred().resolve());
+           　	        }
+           　			$.when(updateeverything()).done(function(){
+           　	            console.log("Updated");
+           　	    	});
+           　　		</c:forEach>
+       		
+		}
 	});
 });
 

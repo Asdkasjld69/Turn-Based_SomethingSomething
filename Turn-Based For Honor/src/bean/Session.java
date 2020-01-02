@@ -9,6 +9,7 @@ import service.UserService;
 public class Session {
 	private int id;
 	private int map_id;
+	private int host_id;
 	private int ucount;
 	private int pcount;
 	private int cap;
@@ -20,6 +21,14 @@ public class Session {
 	private Timestamp start_time;
 	private Timestamp end_time;
 	
+	
+	
+	public int getHost_id() {
+		return host_id;
+	}
+	public void setHost_id(int host_id) {
+		this.host_id = host_id;
+	}
 	public String getPassword() {
 		return password;
 	}

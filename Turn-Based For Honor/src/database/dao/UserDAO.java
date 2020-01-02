@@ -50,7 +50,8 @@ public class UserDAO {
 		o.add(user.getGamesabandoned());
 		o.add(user.getDamagedealt());
 		o.add(user.getDamagereceived());
-		String sql = "update USERS set gender=?,kills=?,deaths=?,assists=?,likes=?,dislikes=?,win=?,lose=?,draw=?,gamesfinished=?,turnsmoved=?,gamesabandoned=?,damagedealt=?,damagereceived=?";
+		o.add(user.getState());
+		String sql = "update USERS set gender=?,kills=?,deaths=?,assists=?,likes=?,dislikes=?,win=?,lose=?,draw=?,gamesfinished=?,turnsmoved=?,gamesabandoned=?,damagedealt=?,damagereceived=?,state=?";
 		if(user.getAvatar()!=null) {
 			sql += ",avatar=?";
 			o.add(user.getAvatar());

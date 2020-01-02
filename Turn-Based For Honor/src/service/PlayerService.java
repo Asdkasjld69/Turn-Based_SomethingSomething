@@ -84,6 +84,17 @@ public class PlayerService {
 		return r;
 	}
 	
+	public List<Player> findPlayerByUId(int user_id) {
+		List<Player> r = null;
+		try {
+			r = dao.findPlayerByUId(user_id);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return r;
+	}
+	
 	public boolean updatePlayer(Player session) {
 		boolean r = false;
 		try {

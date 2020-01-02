@@ -26,9 +26,11 @@ public class ActivateUserServlet extends HttpServlet {
 		String code=request.getParameter("activeCode");
 		try {
 			uservice.activateUser(code);
+			request.getRequestDispatcher("/client/security/activatesuccess.jsp").forward(request, response);
 		} catch (ActiveUserException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			request.getRequestDispatcher("/client/security/activatefailed.jsp").forward(request, response);
 		}
 		
 	}

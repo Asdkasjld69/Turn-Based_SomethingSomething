@@ -40,6 +40,7 @@ public class CreateSessionServlet extends HttpServlet {
 		s.setName(name);
 		s.setMap_id(mid);
 		s.setCap(cap);
+		s.setHost_id(user.getId());
 		s.setPassword(password);
 		Session sess = sservice.addAndReturnSession(s);
 		PlayerService pservice = new PlayerService();

@@ -31,22 +31,40 @@ public class SignUpServlet extends HttpServlet {
 		String password2 = request.getParameter("password2");
 		String email = request.getParameter("email");
 		boolean flag = false;
-		if(uservice.findUserByUsername(username)!=null) {
+		if(username==null||username.trim().equals("")) {
+			request.setAttribute("usernameMessage", "<span style='color:#FF3333;'>用户名为空</span>");
+			flag = true;
+		}
+		else if(uservice.findUserByUsername(username)!=null) {
 			request.setAttribute("usernameMessage", "<span style='color:#FF3333;'>用户名已存在</span>");
 			flag = true;
 		}
-		if(uservice.findUserByEmail(email)!=null) {
+		if(password==null||password.trim().equals("")) {
+			request.setAttribute("passwordMessage", "<span style='color:#FF3333;'>密码为空</span>");
+			flag = true;
+		}
+		else if(password.length()<6) {
+			request.setAttribute("passwordMessage", "<span style='color:#FF3333;'>密码长度应不小于6位</span>");
+			flag = true;
+		}
+		else if(!password2.equals(password)) {
+			request.setAttribute("password2Message", "<span style='color:#FF3333;'>两次输入密码不一致</span>");
+			flag = true;
+		}
+		if(email==null||email.trim().equals("")) {
+			request.setAttribute("emailMessage", "<span style='color:#FF3333;'>邮箱为空</span>");
+			flag = true;
+		}
+		else if(uservice.findUserByEmail(email)!=null) {
 			request.setAttribute("emailMessage", "<span style='color:#FF3333;'>邮箱已被使用</span>");
 			flag = true;
 		}
-		if(!email.matches("^[A-Za-z0-9\\u4e00-\\u9fa5]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+$")) {
-			flag = true;
-		}
-		if(!password.equals(password2)) {
+		else if(!email.matches("^[A-Za-z0-9\\u4e00-\\u9fa5]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+$")) {
 			flag = true;
 		}
 		if(flag) {
 			request.getRequestDispatcher("/client/security/signup.jsp").forward(request, response);
+			return;
 		}
 		User nu = new User();
 		nu.setUsername(username);

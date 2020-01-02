@@ -169,8 +169,14 @@
 								<input type="hidden" name="stateno" value="0">
 								<input type="hidden" name="priority" value="5">
 							</form>
-							<div class="pchara blocks select${targeted}" posx="${col.index}" posy="${row.index}" id="" isthis="${player_chara.user_id==currentuser.id}" cid="${player_chara.character_id}" >
-								<div class="blocks" style="background: url(img/avatar/character/${player_chara.character_id}.gif)"></div>
+							<div class="pchara blocks select${targeted}" posx="${col.index}" posy="${row.index}" id="" isthis="${player_chara.user_id==currentuser.id}" cid="${player_chara.character_id}">
+								<div class="blocks" style="background: url(img/avatar/character/${player_chara.character_id}.gif)">
+									<span class="label">${player_chara.health}/${player_chara.health_max}</span>
+									<c:if test="${player_chara.user_id==currentuser.id}">
+										<br/><br/>
+										<span class="label">YOU</span>
+									</c:if>
+								</div>
 							</div>
 						</c:if>
 					</c:if>
@@ -183,57 +189,57 @@
 $(function(){
 	$('.coord').click(function(){
 		var sessionstate = ${session.state};
-		var haschara = ${thisuserpcl!=null&&thisuserpcl.size()>0};
-		var charastate = ${(thisuserpcl!=null&&thisuserpcl.size()>0)?thisuserpcl.get(0).state:-1};
-		if((sessionstate==0)&&(haschara==true)&&(charastate<sessionstate)){
-			$(this).attr("id","coordchosen");
-			$(this).removeClass("select").addClass("targeted");
-			$('.coord').not(this).attr("id","");
-			$('.coord').not(this).removeClass("targeted").addClass("select");
-			$('#confirminit').click(function(){
-				var posx = $('#coordchosen').attr("posx");
-				var posy = $('#coordchosen').attr("posy");
-				var form = "#init"+posx+"_"+posy;
-				alert($(form).serialize());
-				function fbl(){
-					console.log("Updating BattleLog");
-					return refreshDiv("battlelog","post",form,"/Turn-Based_For_Honor/BattleLogServlet",true);
-				}
-				function fbf(){
-					console.log("Updating BattleField");
-					return refreshDiv("battlefield","get","#battlefield_head","/Turn-Based_For_Honor/LoadSessionServlet",false);
-				}
-				function fpl(){
-					console.log("Updating PlayerList");
-					return refreshDiv("playerlist","get","#playerlist_head","/Turn-Based_For_Honor/LoadSessionServlet",false);
-				}
-				function ftm(){
-					console.log("Updating Timer");
-					return refreshDiv("timer","get","#timer_head","/Turn-Based_For_Honor/LoadSessionServlet",false);
-				}
-				function updatebattlelog(){
-		            var tasks = [fbl,ftm,fbf,fpl];
-		            return tasks.reduce(function(prev,next){
-		              return prev.then(next);
-		            },$.Deferred().resolve());
-		        }
-				$.when(updatebattlelog()).done(function(){
-		            console.log("Updated");
-	        	});
-			});
+		if(sessionstate>-2){
+			var haschara = ${thisuserpcl!=null&&thisuserpcl.size()>0};
+			var charastate = ${(thisuserpcl!=null&&thisuserpcl.size()>0)?thisuserpcl.get(0).state:-1};
+			if((sessionstate==0)&&(haschara==true)&&(charastate<sessionstate)){
+				$(this).attr("id","coordchosen");
+				$(this).removeClass("select").addClass("targeted");
+				$('.coord').not(this).attr("id","");
+				$('.coord').not(this).removeClass("targeted").addClass("select");
+				$('#confirminit').click(function(){
+					var posx = $('#coordchosen').attr("posx");
+					var posy = $('#coordchosen').attr("posy");
+					var form = "#init"+posx+"_"+posy;
+					
+					function fbl(){
+						console.log("Updating BattleLog");
+						return refreshDiv("battlelog","post",form,"/Turn-Based_For_Honor/BattleLogServlet",true);
+					}
+					function fbf(){
+						console.log("Updating BattleField");
+						return refreshDiv("battlefield","get","#battlefield_head","/Turn-Based_For_Honor/LoadSessionServlet",false);
+					}
+					function fpl(){
+						console.log("Updating PlayerList");
+						return refreshDiv("playerlist","get","#playerlist_head","/Turn-Based_For_Honor/LoadSessionServlet",false);
+					}
+					function ftm(){
+						console.log("Updating Timer");
+						return refreshDiv("timer","get","#timer_head","/Turn-Based_For_Honor/LoadSessionServlet",false);
+					}
+					function updatebattlelog(){
+			            var tasks = [fbl,ftm,fbf,fpl];
+			            return tasks.reduce(function(prev,next){
+			              return prev.then(next);
+			            },$.Deferred().resolve());
+			        }
+					$.when(updatebattlelog()).done(function(){
+			            console.log("Updated");
+		        	});
+				});
+			}
 		}
 	});
 	$('.pchara').click(function(){
-		var isthis = $(this).attr("isthis");
-		var cid = $(this).attr("cid");
-		$(this).attr("id","charachosen");
-		$('.pchara').not(this).attr("id","");
-		if(isthis=="true"){
-			alert("IT'S YOU!");
-			switch(cid){
-			case 10:
-			case 11:
-			case 12:
+		var sessionstate = ${session.state};
+		if(sessionstate>-2){
+			var isthis = $(this).attr("isthis");
+			var cid = $(this).attr("cid");
+			$(this).attr("id","charachosen");
+			$('.pchara').not(this).attr("id","");
+			if(isthis=="true"){
+				alert("IT'S YOU!");
 			}
 		}
 	});

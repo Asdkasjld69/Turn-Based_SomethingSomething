@@ -14,19 +14,19 @@ import database.DataSourceUtils;
 public class SessionDAO {
 
 	public void addSession(Session session) throws SQLException {
-		String sql = "insert into SESSIONS(name,cap,map_id,password) values(?,?,?,?)";
+		String sql = "insert into SESSIONS(name,host_id,cap,map_id,password) values(?,?,?,?,?)";
 		QueryRunner runner = new QueryRunner(DataSourceUtils.getDataSource());
-		int row = runner.update(sql, session.getName(), session.getCap(), session.getMap_id(), session.getPassword());
+		int row = runner.update(sql, session.getHost_id() ,session.getName(), session.getCap(), session.getMap_id(), session.getPassword());
 		if (row == 0) {
 			throw new RuntimeException();
 		}
 	}
 
 	public Session addAndReturnSession(Session session) throws SQLException {
-		String sql = "insert into SESSIONS(name,cap,map_id,password,state) values(?,?,?,?,?)";
+		String sql = "insert into SESSIONS(name,host_id,cap,map_id,password,state) values(?,?,?,?,?,?)";
 		QueryRunner runner = new QueryRunner(DataSourceUtils.getDataSource());
 		int si = -1000 - findSessionByConditions(new ArrayList<String[]>()).size();
-		int row = runner.update(sql, session.getName(), session.getCap(), session.getMap_id(), session.getPassword(),
+		int row = runner.update(sql, session.getName(), session.getHost_id(),session.getCap(), session.getMap_id(), session.getPassword(),
 				si);
 		if (row == 0) {
 			throw new RuntimeException();
@@ -51,33 +51,47 @@ public class SessionDAO {
 		String sql = "select pcount,ucount,MAPS.name map_name,SESSIONS.* from SESSIONS,MAPS,(select distinct session_id,count(user_id) ucount from PLAYERS where state>-2 group by session_id) suser,(select session_id,count(*) pcount from PLAYERS where state > -2 group by session_id) splayer where splayer.session_id=SESSIONS.id and suser.session_id=SESSIONS.id and map_id=MAPS.id and SESSIONS.state>-1";
 		for (int i = 0; i < conditions.size(); i++) {
 			sql += " and ";
-			if (conditions.get(i)[0].equals("password")) {
-				switch (conditions.get(i)[1]) {
+			String[] condition = conditions.get(i);
+			if (condition[0].equals("username")) {
+				if(condition.length>2) {
+					switch(condition[2]) {
+					case"Y": sql += "exists(select USERS.* from USERS,PLAYERS tp where USERS.username=? and USERS.id=tp.user_id and tp.session_id = SESSIONS.id and tp.state>-2)" ;break;
+					case"N": sql += "not exists(select USERS.* from USERS,PLAYERS tp where USERS.username=? and USERS.id=tp.user_id and tp.session_id = SESSIONS.id and tp.state>-2)" ;break;
+					}
+				}
+				else {
+					sql += "exists(select USERS.* from USERS,PLAYERS tp where USERS.username=? and USERS.id=tp.user_id and tp.session_id = SESSIONS.id and tp.state>-2)" ;
+				}
+				o.add(condition[1]);
+				continue;
+			}
+			if (condition[0].equals("password")) {
+				switch (condition[1]) {
 				case "Y":
-					sql += conditions.get(i)[0] + " is NOT NULL";
+					sql += condition[0] + " is NOT NULL";
 					break;
 				case "N":
-					sql += conditions.get(i)[0] + " is NULL";
+					sql += condition[0] + " is NULL";
 				}
 				continue;
 			}
-			if (conditions.get(i)[0].equals("state")) {
-				switch (conditions.get(i)[1]) {
+			if (condition[0].equals("state")) {
+				switch (condition[1]) {
 				case "0":
-					sql += conditions.get(i)[0] + " =0";
+					sql += condition[0] + " =0";
 					break;
 				case "1":
-					sql += conditions.get(i)[0] + " >0";
+					sql += condition[0] + " >0";
 				}
 				continue;
 			}
-			o.add(conditions.get(i)[1]);
-			switch (conditions.get(i)[0]) {
+			o.add(condition[1]);
+			switch (condition[0]) {
 			case "cap":
-				sql += conditions.get(i)[0] +"=?";
+				sql += condition[0] +"=?";
 				break;
 			default:
-				sql += conditions.get(i)[0] + " like ?";
+				sql += condition[0] + " like ?";
 			}
 		}
 		sql += " order by create_time desc";

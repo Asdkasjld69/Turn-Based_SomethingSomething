@@ -8,6 +8,7 @@ import bean.User;
 import database.dao.UserDAO;
 import security.exception.ActiveUserException;
 import security.exception.RegisterException;
+import security.IPV4UTIL;
 import security.MailSender;
 import security.MailUtils;
 
@@ -20,11 +21,10 @@ public class UserService {
 			dao.addUser(user);
 			// 发送激活邮件
 			String emailMsg = "Dear "+user.getUsername()+",you should click on this:"
-					+ "<a href='http://112.64.55.184:8090/Turn-Based_For_Honor/ActiveUserServlet?activeCode="
-					+ user.getActiveCode() + "'>&nbsp;ACTIVATE&nbsp;</a>。"
+					+ "<a href='http://"+IPV4UTIL.getV4IP()+":8090/Turn-Based_For_Honor/ActivateUserServlet?activeCode="
+					+ user.getActiveCode() + "'>&nbsp;ACTIVATE&nbsp;</a>"
 							+ " ASAP.";
 			MailUtils.sendMail(user.getEmail(), emailMsg);
-			MailSender.getInstance().sendMail(user.getEmail(), emailMsg);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RegisterException("REGISTERATION FAILED");
@@ -64,7 +64,12 @@ public class UserService {
 				if (user.getState() == 1) {
 					return user;
 				}
-				throw new LoginException("NOT ACTIVATED");
+				if(user.getState() == -1) {
+					throw new LoginException("BANNED");
+				}
+				else {
+					throw new LoginException("NOT ACTIVATED");
+				}
 			}
 			throw new LoginException("WRONG USERNAME/PASSWORD");
 		} catch (SQLException e) {

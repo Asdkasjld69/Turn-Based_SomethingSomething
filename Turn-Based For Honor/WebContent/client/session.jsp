@@ -75,26 +75,51 @@
 			<input type="hidden" name="id" value="${session.id}">
 		</form>
 	</div>
-	<script type="text/javascript">
-		$('#return', window.parent.document).show(100);
-		$('#return', window.parent.document).click(function(){
-			history.go(-1);
-		});
-		$('.buttontoggle').click(function (){
-			var target = $(this).attr("target");
-			$(target).toggle();
-		});
-	</script>
+	<c:if test="${currentuser.role=='SUPER'}">
+		<div class="label float">id=${session.id}</div>
+	</c:if>
+	<c:if test="${thisuserpcount>0}">
+		<button id="giveup" class="float" style="margin-top:25%;margin-left:40%">放弃</button>
+	</c:if>
 </body>
 <script type="text/javascript">
+	$('#return', window.parent.document).show(100);
+	$('#return', window.parent.document).click(function(){
+		history.go(-1);
+	});
+	$('.buttontoggle').click(function (){
+		var target = $(this).attr("target");
+		$(target).toggle();
+	});
+</script>
+<script type="text/javascript">
 	var scale = 1;
+	function posFix(tag,tag2){
+		if(tag2==''||tag2==null){
+			tag2 = tag;
+		}
+		var width = $(tag2).width();
+		var height = $(tag2).height();
+		var offsetx = $(tag).offset().left;
+		var offsety = $(tag).offset().top;
+		if(offsetx>=8*scale){
+	    	offsetx = 8*scale;
+	    }
+	    if(offsetx<-width*scale){
+	    	offsetx = -width*scale;
+	    }
+		if(offsety>=8*scale){
+			offsety = 8*scale;
+		}
+		if(offsety<-height*scale){
+	    	offsety = -height*scale;
+	    }
+	    $(tag).offset({"top":offsetx,"left":offsety});
+	}
 	window.onmousewheel=function(event){
 		var trans = $('.window').css("transform").replace(/[^0-9\-,]/g,'').split(',');
-		var width = $('.window').width();
-		var height = $('.window').height();
-		var offsetx = $('.window').offset().left;
-		var offsety = $('.window').offset().top;
 		console.log(trans);
+		posFix('.window');
 		var flag = false;
 		if (event.deltaY< 0) {
 			if(scale+0.05<1){
@@ -116,50 +141,51 @@
 	        }
 	        console.log('Zoom Out:'+scale);
 	    }
-		console.log("size:"+width+","+height);
 		var scalefig="scale("+scale+")";
-	    $(".window").css({"transform":scalefig});
-	    if(offsetx>=8){
-	    	offsetx = 8;
-	    }
-	    if(offsetx<=-width){
-	    	offsetx = -width;
-	    }
-		if(offsety>=8){
-			offsety = 8;
-		}
-		if(offsety<=-height){
-	    	offsety = -height;
-	    }
-	    $('.window').offset({"top":offsetx,"left":offsety});
-	    console.log($('.window').offset().left+","+$('.window').offset().top);
+	    $('.window').css({"transform":scalefig});
+	   	posFix('.window');
 	}
 	$(window).resize(function(){
-		var width = $('.window').width();
-		var height = $('.window').height();
-		var offsetx = $('.window').offset().left;
-		var offsety = $('.window').offset().top;
-		if(offsetx>=8){
-	    	offsetx = 8;
-	    }
-	    if(offsetx<=-width){
-	    	offsetx = -width;
-	    }
-		if(offsety>=8){
-			offsety = 8;
+		posFix('.window');
+	});
+	var mouseState = 0;
+	var mousePosX = -1;
+	var mousePosY = -1;
+	$('.window').mousedown(function(e){
+		mouseState = 1;
+		console.log("MOUSE DOWN");
+		mousePosX = e.pageX;
+		mousePosY = e.pageY;
+	});
+	$(window).mousemove(function(e){
+		if(mouseState==1){
+			var posreX = e.pageX-mousePosX;
+			var posreY = e.pageY-mousePosY;
+			mousePosX = e.pageX;
+			mousePosY = e.pageY;			
+			var width = $('.window').width();
+			var height = $('.window').height();
+			var offsetx = $('.window').offset().left;
+			var offsety = $('.window').offset().top;
+			offsetx = offsetx+posreX;
+			offsety = offsety+posreY;
+			$('.window').offset({"top":offsetx,"left":offsety});
+			posFix('.window');
 		}
-		if(offsety<= -height){
-	    	offsety = -height;
-	    }
-		$('.window').offset({"top":offsetx,"left":offsety});
+	});
+	$('.window').mouseleave(function(){
+		console.log("MOUSE LEAVE");
+	});
+	$(window).mouseup(function(){
+		mouseState = 0;
+		console.log("MOUSE UP");
 	});
 	$(function(){
-		$('#playerlist').css({"margin-left":$('#main',window.parent.document).width()-$('#playerlist').width()+"px"});
-		$('#togglepl').css({"margin-left":$('#main',window.parent.document).width()-36+"px"});
+		$('#playerlist').css({"margin-left":$('#main',window.parent.document).width()-$('#playerlist').width()-8+"px"});
+		$('#togglepl').css({"margin-left":$('#main',window.parent.document).width()-$('#togglepl').width()-16+"px"});
 		$(window).resize(function(){
-			$('#togglepl').css({"margin-left":$('#main',window.parent.document).width()-36+"px"});
-			$('#playerlist').css({"margin-left":$('#main',window.parent.document).width()-$('#playerlist').width()+"px"});
-			$('#timer').css({"margin-left":$('#main',window.parent.document).width()/2-$('#timer').width()/2+"px"});
+			$('#togglepl').css({"margin-left":$('#main',window.parent.document).width()-$('#togglepl').width()-8+"px"});
+			$('#playerlist').css({"margin-left":$('#main',window.parent.document).width()-$('#playerlist').width()-16+"px"});
 		});
 		function fbl(){
 			console.log("Updating BattleLog");
@@ -193,7 +219,61 @@
         }
 		$.when(updateeverything()).done(function(){
             console.log("Updated");
+            setInterval("java:checkSessionChat()",100);
     	});
 	});
+	var currentchat = 0;
+	function checkUpdate(type,form,target)
+	{
+	  var xmlhttp;
+	  if (window.XMLHttpRequest)
+	  {
+	    // IE7+, Firefox, Chrome, Opera, Safari 浏览器执行代码
+	    xmlhttp=new XMLHttpRequest();
+	  }
+	  else
+	  {
+	    // IE6, IE5 浏览器执行代码
+	    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	  }
+	  xmlhttp.onreadystatechange=function()
+	  {
+	    if (xmlhttp.readyState==4 && xmlhttp.status==200)
+	    {
+	    	var r = xmlhttp.responseText;
+	    	var htmlBlock = r.split("<br/>");
+	    	var reg = /sess${session.id}:[0-9]*/i;
+	    	var flag = false;
+	    	for (var i in htmlBlock){
+	    		var blocks;
+	    		if (blocks = htmlBlock[i].match(reg)){
+	    			r = blocks[0].replace("sess"+${session.id}+":","");
+	    			flag = true;
+	    		}
+	    	}
+	    	if(flag == false){
+	    		r = 0;
+	    	}
+	    	if(r!=currentchat){
+	    		console.log(r);
+	    		refreshDiv("chat","get","#chat_head","/Turn-Based_For_Honor/ChatServlet",true);
+	    		currentchat = r;
+	    		return true; 
+	    	}
+	    	else{
+	    		return false;
+	    	}
+	    }
+	  }
+	  target = target+"?t="+new Date().getTime();
+	  if(form!=""){
+		  target = target+"&"+$(form).serialize();
+	  }
+	  xmlhttp.open(type,target,true);
+	  xmlhttp.send();
+	}
+	function checkSessionChat(){
+		checkUpdate("get","#chat_check_head","/Turn-Based_For_Honor/ChatServlet");
+	}
 </script>
 </html>

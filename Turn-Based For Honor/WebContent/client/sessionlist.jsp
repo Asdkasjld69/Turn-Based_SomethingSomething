@@ -13,8 +13,13 @@
 
 <body>
 	<div class="window">
+		<form action="#" id="check_head" method="GET" class="hidden">
+			<input type="hidden" name="type" value="${currentuser.role}">
+			<input type="hidden" name="check" value="1">
+		</form>
 		<form action="#" id="search" method="GET" class="left nointeract">
 			<input type="hidden" name="type" value="${currentuser.role}">
+			<input type="hidden" name="currentusername" value="${currentuser.username}">
 			<table>
 				<c:if test="${currentuser.role.equals('SUPER')}">
 					<tr>
@@ -23,6 +28,10 @@
 						<td>地图id</td>
 						<td>
 							<input type="text" name="search_map_id" value="">
+						</td>
+						<td>用户</td>
+						<td>
+							<input type="text" name="search_username">
 						</td>
 					</tr>
 				</c:if>
@@ -52,7 +61,17 @@
 				</tr>
 				<tr>
 					<td>人数</td>
-					<td><input type="range" id="search_cap" name="search_cap" min="1" max="4" step="1" value="1"><span id="capnum">任意</span></td>
+					<td colspan="3"><input type="range" id="search_cap" name="search_cap" min="1" max="4" step="1" value="1"><span id="capnum">任意</span></td>
+					<c:if test="${currentuser.role!='SUPER'}">
+						<td>我的</td>
+						<td>
+							<select name="search_username">
+								<option value="" selected="selected">任意</option>
+								<option value="N">否</option>
+								<option value="Y">是</option>
+							</select>
+						</td>
+					</c:if>
 				</tr>
 			</table>
 		</form>
@@ -71,35 +90,14 @@
 				<td width="10%">
 					状态
 				</td>
+				<c:if test="${currentuser.role=='SUPER'}">
+					<td width="5%">
+						操作
+					</td>
+				</c:if>
 			</tr>
 		</table>
 		<div id="sesslist" style="width:100%;height:500px;overflow-y:scroll">
-			<table class="list" style="width:100%">
-				<c:forEach items="${sessions}" var="session">
-					<c:url var="join" value="/LoadSessionServlet">
-						<c:param name="id" value="${session.id}"/>
-						<c:param name="user_id" value="${currentuser.id}"/>
-					</c:url>
-					<c:set var="pass" value="item"/>
-					<c:if test="${session.password!=null&&session.password!=''}">
-						<c:set var="pass" value="itempass"/>
-					</c:if>
-					<tr class="${pass} nointeract" onclick="attemptJoin('${join}','${session.password}')">
-						<td width="30%">
-							${session.name}
-						</td>
-						<td width="30%">
-							${session.map_name}
-						</td>
-						<td width="10%">
-							${session.ucount}/${session.cap}
-						</td>
-						<td width="10%">
-							${session.state==0?"准备中":session.state==-1?"已结束":"第"}${session.state>0?session.state:""}${session.state>0?"回合":""}
-						</td>
-					</tr>
-				</c:forEach>
-			</table>
 		</div>
 	</div>
 	<iframe id="createframe" class="createframe subwindow float hidden" src="${pageContext.servletContext.contextPath}/client/subwindow/createmenu.jsp" scrolling="no"></iframe>
@@ -140,9 +138,6 @@
 			$(target).hide();
 		});
 	});	
-	function refresh(){
-    	refreshDiv("sesslist","get","#search","/Turn-Based_For_Honor/ListSessionServlet",false);
-    }
     function attemptJoin(target,password){
 		$('.createframe').hide();
 		if(password==""){
@@ -163,6 +158,60 @@
 			});
 		}
 	}
+    var sessnum = 0;
+	function checkUpdate(type,form,target)
+	{
+	  var xmlhttp;
+	  if (window.XMLHttpRequest)
+	  {
+	    // IE7+, Firefox, Chrome, Opera, Safari 浏览器执行代码
+	    xmlhttp=new XMLHttpRequest();
+	  }
+	  else
+	  {
+	    // IE6, IE5 浏览器执行代码
+	    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	  }
+	  xmlhttp.onreadystatechange=function()
+	  {
+	    if (xmlhttp.readyState==4 && xmlhttp.status==200)
+	    {
+	    	var r = xmlhttp.responseText;
+	    	var htmlBlock = r.split("<br/>");
+	    	var reg = /sessnum:[0-9]*/i;
+	    	var flag = false;
+	    	for (var i in htmlBlock){
+	    		var blocks;
+	    		if (blocks = htmlBlock[i].match(reg)){
+	    			r = blocks[0].replace("sessnum:","");
+	    			flag = true;
+	    		}
+	    	}
+	    	if(flag == false){
+	    		r = 0;
+	    	}
+	    	if(r!=sessnum){
+	    		console.log(r);
+	    		refreshDiv("sesslist","get","#search","/Turn-Based_For_Honor/ListSessionServlet",false);
+	    		sessnum = r;
+	    		return true; 
+	    	}
+	    	else{
+	    		return false;
+	    	}
+	    }
+	  }
+	  target = target+"?t="+new Date().getTime();
+	  if(form!=""){
+		  target = target+"&"+$(form).serialize();
+	  }
+	  xmlhttp.open(type,target,true);
+	  xmlhttp.send();
+	}
+	function checkSession(){
+		checkUpdate("get","#check_head","/Turn-Based_For_Honor/ListSessionServlet");
+	}
+	setInterval("checkSession()",500);
 	</script>
 </body>
 </html>

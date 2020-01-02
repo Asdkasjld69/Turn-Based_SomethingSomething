@@ -93,6 +93,7 @@ DROP TABLE IF EXISTS `SESSIONS`;
 
 CREATE TABLE `SESSIONS`(
   `id` int(12) NOT NULL AUTO_INCREMENT,
+  `host_id` int(12) NOT NULL,
   `name` varchar(64) NOT NULL,
   `map_id` int(12) NOT NULL,
   `cap` int(2) DEFAULT 2,
@@ -102,12 +103,13 @@ CREATE TABLE `SESSIONS`(
   `start_time` TIMESTAMP,
   `end_time` TIMESTAMP,
   PRIMARY KEY(`id`),
-  FOREIGN KEY(`map_id`) REFERENCES `MAPS`(`id`)
+  FOREIGN KEY(`map_id`) REFERENCES `MAPS`(`id`),
+  FOREIGN KEY(`host_id`) REFERENCES `USERS`(`id`)
 );
 
-INSERT INTO `SESSIONS`(`id`,`name`,`map_id`,`cap`,`state`) VALUES
-(1,'LOBBY FOR TEST!',1,2,1),
-(2,'ANOTHER ONE!',1,2,5);
+INSERT INTO `SESSIONS`(`id`,`host_id`,`name`,`map_id`,`cap`,`state`) VALUES
+(1,2,'LOBBY FOR TEST!',1,2,1),
+(2,4,'ANOTHER ONE!',1,2,5);
 
 DROP TABLE IF EXISTS `PLAYERS`;
 
@@ -134,8 +136,8 @@ CREATE TABLE `PLAYERS`(
 INSERT INTO `PLAYERS`(`session_id`,`user_id`,`character_id`,`team`,`health`,`health_max`,`revenge`,`state`,`posx`,`posy`) VALUES
 (1,2,10,0,125,125,0,-1,25,26),
 (1,3,12,1,125,125,0,-1,16,15),
-(2,4,13,0,150,140,0,-1,15,14),
-(2,5,14,1,125,125,0,0,15,26);
+(2,4,13,0,150,140,0,4,15,14),
+(2,5,14,1,125,125,0,4,15,26);
 
 DROP TABLE IF EXISTS `CHATS`;
 

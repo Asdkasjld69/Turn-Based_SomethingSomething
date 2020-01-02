@@ -1,6 +1,7 @@
 package servlet;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.AsyncContext;
@@ -23,6 +24,7 @@ import service.ChatService;
 import service.MapService;
 import service.PlayerService;
 import service.SessionService;
+import service.UserService;
 
 /**
  * Servlet implementation class LoadSessionServlet
@@ -30,7 +32,8 @@ import service.SessionService;
 @WebServlet(asyncSupported = true, urlPatterns = { "/LoadSessionServlet" })
 public class LoadSessionServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-
+	private static HashMap<Integer,List<Session>> SESSIONS = new HashMap<Integer,List<Session>>();
+	private static HashMap<Integer,List<Player>> PLAYERS = new HashMap<Integer,List<Player>>();
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
 	 *      response)
@@ -39,8 +42,13 @@ public class LoadSessionServlet extends HttpServlet {
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		String type = request.getParameter("type");
+		String check = request.getParameter("check");
 		int id = Integer.parseInt(request.getParameter("id"));
 		int pid = -1;
+		boolean checkflag = false;
+		if(check!=null&&!check.trim().equals("")) {
+			checkflag = true;
+		}
 		SessionService sservice = null;
 		MapService mservice = null;
 		PlayerService pservice = null;
@@ -88,6 +96,8 @@ public class LoadSessionServlet extends HttpServlet {
 			}break;
 		}
 		switch (type) {
+		case "ban":
+		case "kick":
 		case "playerlist":
 			pservice = new PlayerService();
 			pl = pservice.findUserBySession(id);
@@ -145,16 +155,19 @@ public class LoadSessionServlet extends HttpServlet {
 				PlayerService pservice = null;
 				ChatService cservice = null;
 				CharacterService chservice = null;
+				UserService uservice = null;
 				List<Player> pl = null;
 				List<Player> pcl = null;
 				List<Chat> cl = null;
 				Player p = null;
 				Character ch = null;
+				User u = null;
+				Session s = null;
+				int user_id = -1;
 				if (type == null) {
 					type = "";
 				}
 				System.out.println("post");
-				System.out.println(type);
 				switch (type) {
 				case "playerlist":
 					id = Integer.parseInt(sid);
@@ -185,6 +198,56 @@ public class LoadSessionServlet extends HttpServlet {
 					break;
 				case "timer":
 					break;
+				case "ban":
+						sservice = new SessionService();
+						uservice = new UserService();
+						pservice = new PlayerService();
+						user_id = Integer.parseInt(request.getParameter("user_id"));
+						id = Integer.parseInt(sid);
+						s = sservice.findSessionById(id);
+						u = uservice.findUserById(user_id);
+						u.setState(-1);
+						uservice.editUser(u);
+						System.out.println("BANNED "+u.getUsername()+"!!");
+						pl = pservice.findPlayerByUId(user_id);
+						for(Player tplayer:pl) {
+							tplayer.setState(-2);
+							pservice.updatePlayer(tplayer);
+						}
+						if(s.getHost_id()==user_id) {
+							pl = pservice.findPlayerBySession(id);
+							for(Player tplayer:pl) {
+								if(tplayer.getUser_id()==user_id) {
+									continue;
+								}
+								tplayer.setState(-2);
+								pservice.updatePlayer(tplayer);
+							}
+						}
+						break;
+				case "kick":
+						pservice = new PlayerService();
+						sservice = new SessionService();
+						id = Integer.parseInt(sid);
+						s = sservice.findSessionById(id);
+						user_id = Integer.parseInt(request.getParameter("user_id"));
+						pl = pservice.findPlayerBySUId(id,user_id);
+						for(Player tplayer:pl) {
+							tplayer.setState(-2);
+							pservice.updatePlayer(tplayer);
+							System.out.println("KICKED "+tplayer.getUsername()+"("+tplayer.getId()+")!!");
+						}
+						if(s.getHost_id()==user_id) {
+							pl = pservice.findPlayerBySession(id);
+							for(Player tplayer:pl) {
+								if(tplayer.getUser_id()==user_id) {
+									continue;
+								}
+								tplayer.setState(-2);
+								pservice.updatePlayer(tplayer);
+							}
+						}
+						break;
 				}
 				try {
 					doGet(request, response);

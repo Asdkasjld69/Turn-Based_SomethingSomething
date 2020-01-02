@@ -62,6 +62,13 @@ public class PlayerDAO {
 		List<Player> Player = runner.query(sql, new BeanListHandler<Player>(Player.class), session_id);
 		return Player;
 	}
+	
+	public List<Player> findPlayerByUId(int user_id) throws SQLException {
+		String sql = "select * from PLAYERS where state>-2 and user_id=?";
+		QueryRunner runner = new QueryRunner(DataSourceUtils.getDataSource());
+		List<Player> Player = runner.query(sql, new BeanListHandler<Player>(Player.class), user_id);
+		return Player;
+	}
 
 	public boolean updatePlayer(Player player) throws SQLException {
 		String sql = "update PLAYERS set character_id=?,team=?,health=?,health_max=?,revenge=?,state=?,posx=?,posy=?,move_time=?,end_time=? where id=?";
